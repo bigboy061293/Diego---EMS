@@ -1,9 +1,23 @@
 #include <TimerOne.h>
+#include <SPI.h>
 #define SONAR_IN_PIN A0
 #define BJT_OUT_PIN 3
 #define SONAR_READ analogRead(A0)
 #define TIMER_INTERRUPT 10
-uint8_t pulse_width = 200; //u sec
+#define CS_PIN 10
+#define M1_LEVEL_0 0 //we need to fill in here after calibration
+#define M1_LEVEL_1 0
+#define M1_LEVEL_2 0
+#define M1_LEVEL_3 0
+#define M1_LEVEL_4 0
+#define M1_LEVEL_5 0
+#define M1_LEVEL_6 0
+#define M1_LEVEL_7 0
+#define M1_LEVEL_8 0
+#define M1_LEVEL_9 0
+#define M1_LEVEL_10 0
+
+uint8_t pulse_width =200; //u sec
 long freq_inv = 1282051 ; // in us
 
 long high_state = pulse_width;
@@ -26,16 +40,26 @@ void process(){
  }
 }
 
+void MCP41010Write(byte value)
+{
+   digitalWrite(CS_PIN,LOW); // select the chip
+   SPI.transfer(B00010001); // command byte
+   SPI.transfer(value); // data byte 
+   digitalWrite(CS_PIN,HIGH); // de-select the chip
+}
+
 void setup() {
   pinMode(BJT_OUT_PIN,OUTPUT);
   Serial.begin(9600);
   Timer1.initialize(TIMER_INTERRUPT);
   Timer1.attachInterrupt(process); 
+  SPI.begin();
 }
 
 void loop() {
   
   Serial.println(SONAR_READ);
+  //MCP41010Write(255);
   delay(100);
 
 }
